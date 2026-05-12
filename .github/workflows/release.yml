@@ -1,0 +1,51 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: rubygems
+    permissions:
+      id-token: write   # OIDC token for RubyGems Trusted Publishing
+      contents: write   # create the GitHub release
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Verify tag matches gem version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          gem_version="$(ruby -r ./lib/fastlane/plugin/hexsign/version.rb -e 'print Fastlane::Hexsign::VERSION')"
+          if [ "$tag" != "$gem_version" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match gemspec version ${gem_version}"
+            exit 1
+          fi
+
+      - name: Run tests
+        run: bundle exec rake
+
+      - name: Configure RubyGems credentials (OIDC)
+        uses: rubygems/configure-rubygems-credentials@main
+
+      - name: Build gem
+        run: gem build fastlane-plugin-hexsign.gemspec
+
+      - name: Push gem
+        run: gem push fastlane-plugin-hexsign-*.gem
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes \
+            fastlane-plugin-hexsign-*.gem
