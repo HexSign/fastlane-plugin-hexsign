@@ -1,0 +1,30 @@
+AllCops:
+  TargetRubyVersion: 3.0
+  NewCops: disable
+  SuggestExtensions: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Metrics/MethodLength:
+  Max: 40
+
+Metrics/AbcSize:
+  Max: 30
+
+Layout/LineLength:
+  Max: 140
+
+# Fastlane's action API requires the method to be named `is_supported?`.
+Naming/PredicatePrefix:
+  Exclude:
+    - "lib/fastlane/plugin/hexsign/actions/*.rb"
+
+# RSpec describe/it blocks and gemspec hashes are naturally long.
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+    - "*.gemspec"
