@@ -22,9 +22,9 @@ describe Fastlane::Actions::HexsignProfilesDownloadByBundleIdAction do
       LANE
 
       expect(result).to eq([
-        "build/sign/foo.mobileprovision",
-        "build/sign/bar.mobileprovision"
-      ])
+                             "build/sign/foo.mobileprovision",
+                             "build/sign/bar.mobileprovision"
+                           ])
     end
 
     it "omits --team-id and --output-dir when not provided" do
@@ -37,6 +37,34 @@ describe Fastlane::Actions::HexsignProfilesDownloadByBundleIdAction do
           hexsign_profiles_download_by_bundle_id(bundle_id: "com.example.app")
         end
       LANE
+    end
+
+    it "returns an empty array when the CLI prints nothing (no profiles matched)" do
+      allow(helper).to receive(:run).and_return("")
+
+      result = Fastlane::FastFile.new.parse(<<~LANE).runner.execute(:test)
+        lane :test do
+          hexsign_profiles_download_by_bundle_id(bundle_id: "com.example.app")
+        end
+      LANE
+
+      expect(result).to eq([])
+    end
+
+    it "tolerates trailing whitespace and blank lines in the path list" do
+      stdout = "\n  build/sign/foo.mobileprovision  \n\n  build/sign/bar.mobileprovision \n"
+      allow(helper).to receive(:run).and_return(stdout)
+
+      result = Fastlane::FastFile.new.parse(<<~LANE).runner.execute(:test)
+        lane :test do
+          hexsign_profiles_download_by_bundle_id(bundle_id: "com.example.app")
+        end
+      LANE
+
+      expect(result).to eq([
+                             "build/sign/foo.mobileprovision",
+                             "build/sign/bar.mobileprovision"
+                           ])
     end
 
     it "errors with an install hint when hexsign is not on PATH" do
