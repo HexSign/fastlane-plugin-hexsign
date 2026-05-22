@@ -92,7 +92,7 @@ Returns an array of `{ p12:, password: }` hashes — one per downloaded certific
 
 ```ruby
 pairs = hexsign_certificates_download_by_type(
-  type:       "IOS_DISTRIBUTION",
+  type:       "DISTRIBUTION",
   team_id:    "ABCDE12345",
   output_dir: "build/sign"
 )
@@ -101,7 +101,7 @@ pairs = hexsign_certificates_download_by_type(
 
 | Option | Env | Required | Description |
 |---|---|---|---|
-| `type` | `HEXSIGN_CERTIFICATE_TYPE` | yes | Apple cert type (e.g. `IOS_DISTRIBUTION`) |
+| `type` | `HEXSIGN_CERTIFICATE_TYPE` | yes | Apple cert type (e.g. `DISTRIBUTION`) |
 | `team_id` | `HEXSIGN_TEAM_ID` | yes | Apple Developer team id |
 | `output_dir` | `HEXSIGN_CERTIFICATE_OUTPUT_DIR` | no | Output directory |
 | `keychain` | `HEXSIGN_KEYCHAIN` | no | macOS only — keychain to create and import every downloaded `.p12` into, ready for codesigning |

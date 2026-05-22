@@ -49,7 +49,7 @@ module Fastlane
           Wraps `hexsign certificates download --type <T> --team-id <ID>`. Returns an
           array of { p12:, password: } hashes — one per downloaded certificate.
 
-          Survives certificate rotation: you point at a cert type (e.g. IOS_DISTRIBUTION)
+          Survives certificate rotation: you point at a cert type (e.g. DISTRIBUTION)
           rather than a specific UUID that changes when a cert is renewed.
 
           The hexsign binary must be on PATH — install via `brew install hexsign` or the
@@ -69,7 +69,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :type,
             env_name: "HEXSIGN_CERTIFICATE_TYPE",
-            description: "Apple certificate type, e.g. IOS_DISTRIBUTION",
+            description: "Apple certificate type, e.g. DISTRIBUTION",
             optional: false,
             type: String
           ),
@@ -114,7 +114,7 @@ module Fastlane
       def self.example_code
         [
           'pairs = hexsign_certificates_download_by_type(
-            type: "IOS_DISTRIBUTION",
+            type: "DISTRIBUTION",
             team_id: "ABCDE12345",
             output_dir: "build/sign"
           )
