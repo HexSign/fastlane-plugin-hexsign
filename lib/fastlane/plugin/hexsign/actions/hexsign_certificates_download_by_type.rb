@@ -13,6 +13,7 @@ module Fastlane
           "--team-id", params[:team_id]
         ]
         args.push("--output-dir", params[:output_dir]) if params[:output_dir]
+        args.push("--keychain", params[:keychain]) if params[:keychain]
 
         stdout = Helper::HexsignHelper.run(args)
         pairs = parse_stdout(stdout)
@@ -22,9 +23,12 @@ module Fastlane
       end
 
       # The CLI prints two lines per certificate: .p12 path then .password path.
+      # With --keychain it also prints a trailing "imported N certificate(s)…"
+      # summary line, which is dropped by keeping only file-path lines.
       # Returns [{ p12: "...", password: "..." }, ...].
       def self.parse_stdout(stdout)
         lines = stdout.split("\n").map(&:strip).reject(&:empty?)
+        lines = lines.select { |line| line.end_with?(".p12", ".password") }
         pairs = []
         lines.each_slice(2) do |p12, password|
           pairs << { p12: p12, password: password }
@@ -80,6 +84,13 @@ module Fastlane
             key: :output_dir,
             env_name: "HEXSIGN_CERTIFICATE_OUTPUT_DIR",
             description: "Directory to write the .p12 and .password files into",
+            optional: true,
+            type: String
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :keychain,
+            env_name: "HEXSIGN_KEYCHAIN",
+            description: "macOS only: create this keychain and import every downloaded .p12 into it, ready for codesigning",
             optional: true,
             type: String
           )

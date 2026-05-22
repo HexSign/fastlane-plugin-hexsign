@@ -34,6 +34,18 @@ describe Fastlane::Actions::HexsignCertificatesDownloadAction do
       LANE
     end
 
+    it "passes --keychain when provided" do
+      expect(helper).to receive(:run)
+        .with(["certificates", "download", "cert-1", "--keychain", "/tmp/ci.keychain-db"])
+        .and_return("")
+
+      Fastlane::FastFile.new.parse(<<~LANE).runner.execute(:test)
+        lane :test do
+          hexsign_certificates_download(id: "cert-1", keychain: "/tmp/ci.keychain-db")
+        end
+      LANE
+    end
+
     it "errors with an install hint when hexsign is not on PATH" do
       allow(helper).to receive(:which).and_return(nil)
 

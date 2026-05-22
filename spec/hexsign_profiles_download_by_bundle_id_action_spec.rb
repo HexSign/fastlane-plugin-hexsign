@@ -67,6 +67,25 @@ describe Fastlane::Actions::HexsignProfilesDownloadByBundleIdAction do
                            ])
     end
 
+    it "passes --install and drops the trailing install summary lines" do
+      expect(helper).to receive(:run)
+        .with(["profiles", "download", "--bundle-id", "com.example.app", "--output-dir", "build/sign", "--install"])
+        .and_return("build/sign/foo.mobileprovision\n" \
+                    "installed App Store com.example.app -> /Users/ci/Library/MobileDevice/Provisioning Profiles/abc.mobileprovision\n")
+
+      result = Fastlane::FastFile.new.parse(<<~LANE).runner.execute(:test)
+        lane :test do
+          hexsign_profiles_download_by_bundle_id(
+            bundle_id: "com.example.app",
+            output_dir: "build/sign",
+            install: true
+          )
+        end
+      LANE
+
+      expect(result).to eq(["build/sign/foo.mobileprovision"])
+    end
+
     it "errors with an install hint when hexsign is not on PATH" do
       allow(helper).to receive(:which).and_return(nil)
 

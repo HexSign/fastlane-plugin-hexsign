@@ -33,5 +33,17 @@ describe Fastlane::Actions::HexsignProfilesDownloadAction do
         end
       LANE
     end
+
+    it "passes --install when requested" do
+      expect(helper).to receive(:run)
+        .with(%w[profiles download prof-1 --install])
+        .and_return("")
+
+      Fastlane::FastFile.new.parse(<<~LANE).runner.execute(:test)
+        lane :test do
+          hexsign_profiles_download(id: "prof-1", install: true)
+        end
+      LANE
+    end
   end
 end

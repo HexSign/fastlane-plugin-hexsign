@@ -63,6 +63,7 @@ hexsign_certificates_download(
 | `id` | `HEXSIGN_CERTIFICATE_ID` | yes | Certificate ID |
 | `output_dir` | `HEXSIGN_CERTIFICATE_OUTPUT_DIR` | no | Output directory |
 | `filename` | `HEXSIGN_CERTIFICATE_FILENAME` | no | Base filename (no extension) |
+| `keychain` | `HEXSIGN_KEYCHAIN` | no | macOS only — keychain to create and import the `.p12` into, ready for codesigning |
 
 ### `hexsign_profiles_download`
 
@@ -80,6 +81,7 @@ hexsign_profiles_download(
 | `id` | `HEXSIGN_PROFILE_ID` | yes | Provisioning profile ID |
 | `output_dir` | `HEXSIGN_PROFILE_OUTPUT_DIR` | no | Output directory |
 | `filename` | `HEXSIGN_PROFILE_FILENAME` | no | Filename (no extension) |
+| `install` | `HEXSIGN_PROFILE_INSTALL` | no | macOS only — also install the profile where Xcode finds it |
 
 ### `hexsign_certificates_download_by_type`
 
@@ -102,6 +104,7 @@ pairs = hexsign_certificates_download_by_type(
 | `type` | `HEXSIGN_CERTIFICATE_TYPE` | yes | Apple cert type (e.g. `IOS_DISTRIBUTION`) |
 | `team_id` | `HEXSIGN_TEAM_ID` | yes | Apple Developer team id |
 | `output_dir` | `HEXSIGN_CERTIFICATE_OUTPUT_DIR` | no | Output directory |
+| `keychain` | `HEXSIGN_KEYCHAIN` | no | macOS only — keychain to create and import every downloaded `.p12` into, ready for codesigning |
 
 ### `hexsign_profiles_download_by_bundle_id`
 
@@ -124,6 +127,7 @@ paths = hexsign_profiles_download_by_bundle_id(
 | `bundle_id` | `HEXSIGN_BUNDLE_ID` | yes | App bundle identifier (exact match) |
 | `team_id` | `HEXSIGN_TEAM_ID` | no | Apple Developer team id — scopes across linked accounts |
 | `output_dir` | `HEXSIGN_PROFILE_OUTPUT_DIR` | no | Output directory |
+| `install` | `HEXSIGN_PROFILE_INSTALL` | no | macOS only — also install every downloaded profile where Xcode finds them |
 
 ## Example lane
 

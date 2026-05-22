@@ -10,6 +10,7 @@ module Fastlane
         args = ["profiles", "download", params[:id]]
         args.push("--output-dir", params[:output_dir]) if params[:output_dir]
         args.push("--filename", params[:filename]) if params[:filename]
+        args.push("--install") if params[:install]
 
         Helper::HexsignHelper.run(args).tap { UI.success("Downloaded provisioning profile #{params[:id]}") }
       end
@@ -54,6 +55,14 @@ module Fastlane
             description: "Filename (no extension) for the downloaded profile",
             optional: true,
             type: String
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :install,
+            env_name: "HEXSIGN_PROFILE_INSTALL",
+            description: "macOS only: also install the profile into ~/Library/MobileDevice/Provisioning Profiles, where Xcode finds it",
+            optional: true,
+            type: Boolean,
+            default_value: false
           )
         ]
       end
@@ -64,7 +73,8 @@ module Fastlane
 
       def self.example_code
         [
-          'hexsign_profiles_download(id: "prof-xyz789", output_dir: "build/sign")'
+          'hexsign_profiles_download(id: "prof-xyz789", output_dir: "build/sign")',
+          'hexsign_profiles_download(id: "prof-xyz789", install: true)'
         ]
       end
 

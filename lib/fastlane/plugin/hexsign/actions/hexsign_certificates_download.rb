@@ -10,6 +10,7 @@ module Fastlane
         args = ["certificates", "download", params[:id]]
         args.push("--output-dir", params[:output_dir]) if params[:output_dir]
         args.push("--filename", params[:filename]) if params[:filename]
+        args.push("--keychain", params[:keychain]) if params[:keychain]
 
         Helper::HexsignHelper.run(args).tap { UI.success("Downloaded certificate #{params[:id]}") }
       end
@@ -54,6 +55,13 @@ module Fastlane
             description: "Base filename (no extension) for the downloaded files",
             optional: true,
             type: String
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :keychain,
+            env_name: "HEXSIGN_KEYCHAIN",
+            description: "macOS only: create this keychain and import the downloaded .p12 into it, ready for codesigning",
+            optional: true,
+            type: String
           )
         ]
       end
@@ -64,7 +72,8 @@ module Fastlane
 
       def self.example_code
         [
-          'hexsign_certificates_download(id: "cert-abc123", output_dir: "build/sign")'
+          'hexsign_certificates_download(id: "cert-abc123", output_dir: "build/sign")',
+          'hexsign_certificates_download(id: "cert-abc123", keychain: "/tmp/hexsign-ci.keychain-db")'
         ]
       end
 

@@ -75,6 +75,29 @@ describe Fastlane::Actions::HexsignCertificatesDownloadByTypeAction do
                            ])
     end
 
+    it "passes --keychain and ignores the trailing import summary line" do
+      expect(helper).to receive(:run)
+        .with(["certificates", "download", "--type", "IOS_DISTRIBUTION", "--team-id", "ABCDE12345",
+               "--output-dir", "build/sign", "--keychain", "/tmp/ci.keychain-db"])
+        .and_return("build/sign/foo.p12\nbuild/sign/foo.password\n" \
+                    "imported 1 certificate(s) into keychain /tmp/ci.keychain-db\n")
+
+      result = Fastlane::FastFile.new.parse(<<~LANE).runner.execute(:test)
+        lane :test do
+          hexsign_certificates_download_by_type(
+            type: "IOS_DISTRIBUTION",
+            team_id: "ABCDE12345",
+            output_dir: "build/sign",
+            keychain: "/tmp/ci.keychain-db"
+          )
+        end
+      LANE
+
+      expect(result).to eq([
+                             { p12: "build/sign/foo.p12", password: "build/sign/foo.password" }
+                           ])
+    end
+
     it "errors with an install hint when hexsign is not on PATH" do
       allow(helper).to receive(:which).and_return(nil)
 

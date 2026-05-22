@@ -10,9 +10,13 @@ module Fastlane
         args = ["profiles", "download", "--bundle-id", params[:bundle_id]]
         args.push("--team-id", params[:team_id]) if params[:team_id]
         args.push("--output-dir", params[:output_dir]) if params[:output_dir]
+        args.push("--install") if params[:install]
 
         stdout = Helper::HexsignHelper.run(args)
+        # With --install the CLI also prints "installed <name> -> <path>" lines;
+        # keep only the downloaded-file paths.
         paths = stdout.split("\n").map(&:strip).reject(&:empty?)
+                      .reject { |line| line.start_with?("installed ") }
 
         UI.success("Downloaded #{paths.size} provisioning profile(s) for bundle #{params[:bundle_id]}")
         paths
@@ -65,6 +69,14 @@ module Fastlane
             description: "Directory to write the .mobileprovision files into",
             optional: true,
             type: String
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :install,
+            env_name: "HEXSIGN_PROFILE_INSTALL",
+            description: "macOS only: also install every downloaded profile into the directory Xcode reads",
+            optional: true,
+            type: Boolean,
+            default_value: false
           )
         ]
       end
