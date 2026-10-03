@@ -43,7 +43,7 @@ HEXSIGN_CLIENT_ID=…
 HEXSIGN_CLIENT_SECRET=…
 ```
 
-Provision a service credential in the [HexSign dashboard](https://dashboard.hexsign.net) under **Settings → CLI Tokens**.
+Provision a service credential in the [HexSign dashboard](https://dashboard.hexsign.io) under **Settings → CLI Tokens**.
 
 ## Actions
 
